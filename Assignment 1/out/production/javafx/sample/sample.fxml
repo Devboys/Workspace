@@ -8,10 +8,11 @@
 <Pane fx:id="primaryPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="169.0" prefWidth="312.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
    <children>
       <Button fx:id="ClickMeButton" layoutX="91.0" layoutY="52.0" mnemonicParsing="false" onAction="#buttonPrint" text="Click me!" textFill="#6f08ff" />
-      <TextField fx:id="txtfield" layoutX="27.0" layoutY="107.0" />
-      <Button fx:id="txtbutton" layoutX="176.0" layoutY="107.0" mnemonicParsing="false" onAction="#changeText">
+      <TextField fx:id="textField" layoutX="27.0" layoutY="107.0" />
+      <Button fx:id="textFieldButton" layoutX="176.0" layoutY="107.0" mnemonicParsing="false" onAction="#changeText">
          <graphic>
-            <Label fx:id="helloWorld" text="Submit" />
+            <Label text="Submit" />
          </graphic></Button>
+      <Label layoutX="27.0" layoutY="140.0" fx:id="buttonLabel" text="Player1: " />
    </children>
 </Pane>
