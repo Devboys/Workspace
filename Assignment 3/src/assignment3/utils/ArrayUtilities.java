@@ -1,7 +1,7 @@
 package assignment3.utils;
 
 public final class ArrayUtilities { //disallow extension
-    private ArrayUtilities(){} //disallow instantiation
+    private ArrayUtilities(){} //private constructor disallows instanciation.
 
     //simple(if inefficient) method to check if a given array contains a given value.
     public static boolean containsInt(int value, int[] array) {

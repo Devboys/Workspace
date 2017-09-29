@@ -14,9 +14,7 @@ public class Tile {
     }
 
     //getter methods
-    public int getXLoc() { return xLoc; }
-    public int getYLoc() { return yLoc; }
-    public boolean getIsBomb(){ return isBomb; }
+    public boolean isBomb(){ return isBomb; }
 
     //setter methods
     public void setBomb(boolean value) { isBomb = value; }
