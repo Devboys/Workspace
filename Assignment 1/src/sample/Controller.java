@@ -10,8 +10,9 @@ public class Controller {
     private int mouseClicked = 0; //keep track of the number of button presses
 
 
-    public void buttonPrint() {
 
+
+    public void buttonPrint() {
         mouseClicked++;                         //when pressed, increment the number of clicks
         if(mouseClicked == 1) {                 //if this is the first click, write one thing.
             System.out.println("button has been pressed in the console");
