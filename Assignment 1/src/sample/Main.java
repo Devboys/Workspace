@@ -1,3 +1,8 @@
+/*
+*  Essential Computing 1 Assignment 1 - "JavaFX: GUI and events
+*  Jeppe S. Faber 59774
+*/
+
 package sample;
 
 import javafx.application.Application;
@@ -16,9 +21,5 @@ public class Main extends Application {
         primaryStage.show();
     }
 
-
-    public static void main(String[] args) {
-
-        launch(args);
-    }
+    public static void main(String[] args) {launch(args);}
 }
