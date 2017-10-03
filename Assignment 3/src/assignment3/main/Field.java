@@ -1,72 +1,58 @@
 package assignment3.main;
 
 import java.util.Random;
-import assignment3.utils.ArrayUtilities;
 
 public class Field {
 
     private int numColumns;
     private int numRows;
-    private Tile[][] mineField;
+    private Tile[][] fieldGrid;
     private int numBombs;
 
-    public Field(int numRows, int numColumns, int numBombs){
-        this.numColumns = numRows;
-        this.numRows = numColumns;
-        mineField = new Tile[numColumns][numRows];
-        if(numBombs < (numColumns * numRows)){  //We have to make sure the amount of bombs does not exceed the number of
-            this.numBombs = numBombs;           // of available tiles. If it does, the program will loop infinitely.
-        }                                       // see bomb-placement part of initField() for the reason why.
-        else {
-            this.numBombs = numRows;
+    //creates a minesweeper field with the given size and with the given number of bombs placed randomly.
+    public Field(int numRowsC, int numColumnsC, int numBombsC){
+
+        //first pass values to the class-scope variables.
+        this.numColumns = numRowsC;
+        this.numRows = numColumnsC;
+        fieldGrid = new Tile[numColumns][numRows];
+
+        if(numBombsC <= (numColumns * numRows)){ //Make sure the amount of bombs does not exceed the number of available
+            this.numBombs = numBombsC;           //tiles. If it does, the program will loop infinitely.
         }
-        initField();
-    }
+        else {
+            this.numBombs = numRowsC * numColumnsC;
+        }
 
-    //fills the minefield with bombs at random. This could be a part of the constructor.
-    private void initField() {
-
-        //initialize the minefield with tiles, and default every tile to be not a bomb.
-        for(int yCoord = 0; yCoord < numRows; yCoord++){
-            for(int xCoord = 0; xCoord < numColumns; xCoord++){
-                mineField[yCoord][xCoord] = new Tile(yCoord, xCoord,false);
+        //initialize the boolean array with non-bombs.
+        for(int i = 0; i < numRows; i++) {
+            for(int j = 0; j < numColumns; j++){
+                fieldGrid[i][j] = new Tile(i, j, false);
             }
         }
-
-        Random randomGenerator = new Random();
-        //track all previously generated bomb locations.
-        int[] previousX = new int[numBombs];
-        int[] previousY = new int[numBombs];
-
-        int test = 0;
 
         //fill minefield with the set amount bombs, placed at random locations with no overlap.
+        Random randomGenerator = new Random();
         for(int bombCount = 0; bombCount < numBombs; bombCount++){
-            //generate random coordinates for bombs.
-            int generatedX = randomGenerator.nextInt(numColumns); //this returns a value between 0 and numColumns-1
-            int generatedY = randomGenerator.nextInt(numRows);    //ditto(numRows)
 
-            //check whether the new bomb has been generated before. If numBombs > available tiles, then the field will
-            //fill out, this will always return false and the loop will continue infinitely.
-             if(!ArrayUtilities.containsInt(generatedX, previousX) ||
-                    !ArrayUtilities.containsInt(generatedY, previousY)){
-                previousX[bombCount] = generatedX;
-                previousY[bombCount] = generatedY;
+            //generate random coordinates the current bomb.
+            int generatedX = randomGenerator.nextInt(numColumns); //this returns a value between 0 and numColumns-1.
+            int generatedY = randomGenerator.nextInt(numRows);    //ditto(numRows).
 
-                mineField[generatedY][generatedX].setBomb(true);
-                 System.out.println("hey: " + test);
-                 test++;
+            //make sure the random field is not already a bomb. If entire board is filled, this will loop forever.
+            if(!fieldGrid[generatedY][generatedX].getBombStatus()){
+                fieldGrid[generatedY][generatedX].setBombStatus(true);
             }
-            else {//if it has, try again.
+            else {//if it is, try again.
                 bombCount--;
             }
         }
     }
 
     //prints out mineField[][] into the console, with bonus ascii formatting, WOW!
-    public void printFieldToConsole() {
+    public void printToConsole() {
         int columnWhiteSpace = ((numColumns *6)-1); //the amount of whitespace between each character.
-
+                                                    //6 spaces between each letter, -1 for the last character on a line.
         for(int i = 0; i < numRows; i++){
 
             //print top line of each row
@@ -76,18 +62,22 @@ public class Field {
             }
             System.out.print("+\n");
 
-            //print tile + spacers between each column in the row.
+            //print tile + spacers between each column-element in the row.
             for(int j = 0; j < numColumns; j++) {
-                if (!mineField[i][j].isBomb()) {
-                    System.out.print("  |  " + 0);
-                } else {
-                    System.out.print("  |  " + 1);
+                if (!fieldGrid[i][j].hasBeenPressed()) {    //not pressed = blank space.
+                    System.out.print("  |  " + " ");
+                }
+                else if(!fieldGrid[i][j].getBombStatus()) { //pressed, but no bomb = line.
+                    System.out.print("  |  " + "-");
+                }
+                else {
+                    System.out.print("  |  " + "x");        //pressed and bomb = cross.
                 }
             }
             System.out.print("  |\n");
         }
 
-        //print ending line with corners
+        //print ending line with corners.
         System.out.print("  +");
         for(int k = 0; k < columnWhiteSpace; k++) {
             System.out.print("-");

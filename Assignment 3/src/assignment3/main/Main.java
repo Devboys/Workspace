@@ -1,21 +1,18 @@
+/*
+*  Essential Computing 1 Assignment #3 - "OOP: Design a class for a minesweeper field"
+*                                 + #4 - "2D array: Create Minesweeper-fields"
+*  Jeppe S. Faber 59774
+*/
 package assignment3.main;
 
-
-<<<<<<< HEAD
 public class Main{
 
     public static void main(String[] args){
-=======
-        int fieldSize = 10 ;
-        int numBombs = 50;
->>>>>>> 560f98d0e5e4e202a2487f60a3addbaf189da129
 
-        int fieldSize = 25 ;
-        int numBombs = 5;
+        int fieldSize = 10;
+        int numBombs = 101;
+
         Field theField = new Field(fieldSize, fieldSize, numBombs);
-        theField.printFieldToConsole();
-
-
-
+        theField.printToConsole();
     }
 }
