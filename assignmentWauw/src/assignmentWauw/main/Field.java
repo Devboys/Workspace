@@ -1,7 +1,7 @@
-package assignment3.main;
+package assignmentWauw.main;
 
 import java.util.Random;
-import assignment3.utils.ArrayUtilities;
+import assignmentWauw.utils.ArrayUtilities;
 
 public class Field {
 
@@ -23,44 +23,28 @@ public class Field {
         initField();
     }
 
-    //fills the minefield with bombs at random. This could be a part of the constructor.
     private void initField() {
+        double numEmptycells = numColumns * numRows;
+        double numUnassignedBombs = numBombs;
 
-        //initialize the minefield with tiles, and default every tile to be not a bomb.
-        for(int yCoord = 0; yCoord < numRows; yCoord++){
-            for(int xCoord = 0; xCoord < numColumns; xCoord++){
-                mineField[yCoord][xCoord] = new Tile(yCoord, xCoord,false);
+        Random randomGen = new Random();
+
+        for(int rowCounter = 0; rowCounter < numRows; rowCounter++) {
+            for(int columnCounter = 0; columnCounter < numColumns; columnCounter++) {
+                mineField[rowCounter][columnCounter] = new Tile();
+
+                int chance = (int) ((numUnassignedBom / numEmptycells) * 100);
+                if(randomGen.nextInt(100) <= chance) {
+                    mineField[rowCounter][columnCounter].setBomb(true);
+                }
+                else {
+                    mineField[rowCounter][columnCounter].setBomb(false);
+                }
+                numEmptycells--;
             }
         }
 
-        Random randomGenerator = new Random();
-        //track all previously generated bomb locations.
-        int[] previousX = new int[numBombs];
-        int[] previousY = new int[numBombs];
 
-        int test = 0;
-
-        //fill minefield with the set amount bombs, placed at random locations with no overlap.
-        for(int bombCount = 0; bombCount < numBombs; bombCount++){
-            //generate random coordinates for bombs.
-            int generatedX = randomGenerator.nextInt(numColumns); //this returns a value between 0 and numColumns-1
-            int generatedY = randomGenerator.nextInt(numRows);    //ditto(numRows)
-
-            //check whether the new bomb has been generated before. If numBombs > available tiles, then the field will
-            //fill out, this will always return false and the loop will continue infinitely.
-             if(!ArrayUtilities.containsInt(generatedX, previousX) ||
-                    !ArrayUtilities.containsInt(generatedY, previousY)){
-                previousX[bombCount] = generatedX;
-                previousY[bombCount] = generatedY;
-
-                mineField[generatedY][generatedX].setBomb(true);
-                 System.out.println("hey: " + test);
-                 test++;
-            }
-            else {//if it has, try again.
-                bombCount--;
-            }
-        }
     }
 
     //prints out mineField[][] into the console, with bonus ascii formatting, WOW!

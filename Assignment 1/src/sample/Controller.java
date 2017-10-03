@@ -13,9 +13,7 @@ public class Controller {
 
     private int clickCount = 0; //keep track of the number of button clicks
 
-
     public void buttonPrint() {
-
         clickCount++;                         //when pressed, increment the number of clicks
         if(clickCount == 1) {                 //if this is the first click, write one thing
             System.out.println("button has been pressed in the console");
