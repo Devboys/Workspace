@@ -4,6 +4,12 @@ import java.util.Random;
 
 public class MinesweeperGrid {
 
+    public static final int[][] NEIGHBOURS = {
+            {-1, -1}, {-1, 0 }, {-1, +1},
+            { 0, -1},           { 0, +1},
+            {+1, -1}, {+1, 0 }, {+1, +1}
+    };
+
     private int numColumns;
     private int numRows;
     private Tile[][] tileGrid;
@@ -23,20 +29,6 @@ public class MinesweeperGrid {
             this.numBombs = numRows * numColumns;
         }
 
-        //in this constructor, we have all we need, so we can simply generate a grid.;
-        generateGrid();
-    }
-
-    //this empty constructor allows us to create the grid before we have values to be given.
-    public MinesweeperGrid() {}
-
-    //setters
-    public void setNumColumns(int numColumns) { this.numColumns = numColumns ; }
-    public void setNumRows(int numRows) { this.numRows = numRows; }
-    public void setNumBombs(int numBombs) { this.numBombs = numBombs; }
-
-    //in this iteration, the tileGrid initialization has been separated from the constructor to allow us to call it
-    public void generateGrid() {
         //initialize the boolean array with non-bomb tiles.
         tileGrid = new Tile[numColumns][numRows];
 
@@ -57,12 +49,27 @@ public class MinesweeperGrid {
             //make sure the random field is not already a bomb. If entire board is filled, this will loop forever.
             if(!tileGrid[generatedY][generatedX].getBombStatus()){
                 tileGrid[generatedY][generatedX].setBombStatus(true);
+
+                //Let the neighbouring tiles know that they have a bomb neighbour.
+                for(int[] offset : NEIGHBOURS){
+                    //Make sure the considered tile is not out of bounds
+                    if(!(generatedX + offset[1] < 0 || generatedX + offset[1] > (numColumns-1) ||
+                            generatedY + offset[0] < 0 || generatedY + offset[0] > (numRows-1))
+                            ){
+                        tileGrid[generatedX + offset[1]][generatedY+ offset[0]].incrementNumNeighbouringBombs();
+                    }
+                }
             }
             else {//if it is, try again.
                 bombCount--;
             }
         }
     }
+
+    public Tile[][] getTileGrid() { return tileGrid; }
+    public int getNumColumns() { return numColumns; }
+    public int getNumRows() { return numRows; }
+
 
     //prints out mineField[][] into the console, with bonus ascii formatting, WOW!
     public void printToConsole() {
