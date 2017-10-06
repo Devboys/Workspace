@@ -8,9 +8,14 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class Controller {
     @FXML
@@ -60,6 +65,7 @@ public class Controller {
 
             //setup the tilemap
             minesweeperGrid = new MinesweeperGrid(numRows, numColumns, numBombs);
+            minesweeperGrid.printToConsole();
 
             //setup button array
             buttons = new Button[numRows][numColumns];
@@ -78,11 +84,11 @@ public class Controller {
             //switch view to the game window.
             Stage currentStage = (Stage) startButton.getScene().getWindow(); //get a reference to the current stage
             GridPane gameRoot = new GridPane();
+            gameRoot.setGridLinesVisible(true);
             Scene gameScene = new Scene(gameRoot, GAME_WIDTH, GAME_HEIGHT);
             currentStage.setScene(gameScene);
-            currentStage.setResizable(false);
             currentStage.centerOnScreen();
-            currentStage.show();
+
 
             //setup new grid with a fitting number of columns and rows.
             for(int rowCounter = 0; rowCounter < minesweeperGrid.getNumRows(); rowCounter++) {
@@ -98,8 +104,6 @@ public class Controller {
                     gameRoot.add(buttons[i][j],j, i);
                 }
             }
-
-
         }
         else{
             startErrorLabel.setText("Please select a difficulty preset or input custom values");
@@ -107,34 +111,55 @@ public class Controller {
 
     }
 
-    public void buttonPressed(Button input){
-        //split the Id into the button coordinates
+    public void buttonPressed(Button input) {
+        //split the Id into the button coordinates.
         String[] parts = input.getId().split("B");
         int rowIndex = Integer.parseInt(parts[0]);
         int columnIndex = Integer.parseInt(parts[1]);
 
-        Tile theTile = minesweeperGrid.getTileGrid()[rowIndex][columnIndex];
+        ArrayList<int[]> neighbours = new ArrayList<>();
+        for(int i = 0; i < MinesweeperGrid.NEIGHBOURS.length; i++) {
+            int[] thisOne = MinesweeperGrid.NEIGHBOURS[i];
+            neighbours.add(thisOne);
+        }
+
+        buttonPressed(rowIndex, columnIndex, neighbours);
+    }
+
+    public void buttonPressed(int rowIndex, int columnIndex, ArrayList<int[]> neighbours){
+        Tile theTile = minesweeperGrid.getTile(rowIndex, columnIndex);
         Button theButton = buttons[rowIndex][columnIndex];
 
         //if the clicked button is not a bomb, change its icon.
         if(!theTile.getBombStatus()) {
             theButton.setText(Integer.toString(theTile.getNumBombNeighbours()));
-            for(int[] offset : MinesweeperGrid.NEIGHBOURS) {
-                if(!(columnIndex + offset[1] < 0 || columnIndex + offset[1] > (numColumns-1) ||
-                        rowIndex + offset[0] < 0 || rowIndex + offset[0] > (numRows-1))
-                        ) {
-                    if (!(minesweeperGrid.getTileGrid()[rowIndex
-                            + offset[1]][columnIndex + offset[0]].getBombStatus())) {
-                        buttons[rowIndex + offset[1]][columnIndex + offset[0]].setText(Integer.toString(
-                                minesweeperGrid.getTileGrid()[rowIndex + offset[1]][columnIndex+offset[0]].getNumBombNeighbours()));
+
+            //cascade effect
+            if(theTile.getNumBombNeighbours() == 0) {
+                for (int[] offset : neighbours) {
+                    int consideredX = columnIndex + offset[1];
+                    int consideredY = rowIndex + offset[0];
+
+                    if (!(consideredX < 0 || consideredX > (numColumns - 1) || consideredY < 0 || consideredY > (numRows - 1))) {
+                        neighbours = new ArrayList<>();
+                        for(int[] test: MinesweeperGrid.NEIGHBOURS) {
+                            if(test != offset) {
+                                neighbours.add(test);
+                            }
+                        }
+                        buttonPressed(consideredY, consideredX, neighbours);
                     }
                 }
             }
         }
         else {
-            buttons[rowIndex][columnIndex].setText("X");
+            theButton.setText("X");
             System.out.println("BOOM!");
         }
+
+    }
+
+    public void expandClick() {
 
     }
 
