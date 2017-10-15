@@ -50,7 +50,7 @@ public class MinesweeperGrid {
             if(!tileGrid[generatedY][generatedX].getBombStatus()){
                 tileGrid[generatedY][generatedX].setBombStatus(true);
 
-                //Let the neighbouring tiles know that they have a bomb neighbour.
+                //let the neighbouring tiles know that they have a bomb neighbour.
                 for(int[] offset : NEIGHBOURS){
                     //Make sure the considered tile is not out of bounds
                     int neighbourX = generatedX + offset[1];
