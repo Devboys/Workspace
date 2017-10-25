@@ -1,4 +1,4 @@
 /.metadata/
 /.recommenders/
-*/bin/
-*/workspace.xml/
+**/bin/
+**/.idea/workspace.xml/
