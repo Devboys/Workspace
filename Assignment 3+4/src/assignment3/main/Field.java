@@ -42,6 +42,7 @@ public class Field {
             //make sure the random field is not already a bomb. If entire board is filled, this will loop forever.
             if(!fieldGrid[generatedY][generatedX].getBombStatus()){
                 fieldGrid[generatedY][generatedX].setBombStatus(true);
+                fieldGrid[generatedY][generatedX].setPressed(true);
             }
             else {//if it is, try again.
                 bombCount--;

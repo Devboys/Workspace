@@ -50,13 +50,15 @@ public class MinesweeperGrid {
             if(!tileGrid[generatedY][generatedX].getBombStatus()){
                 tileGrid[generatedY][generatedX].setBombStatus(true);
 
-                //Let the neighbouring tiles know that they have a bomb neighbour.
+                //let the neighbouring tiles know that they have a bomb neighbour.
                 for(int[] offset : NEIGHBOURS){
                     //Make sure the considered tile is not out of bounds
-                    if(!(generatedX + offset[1] < 0 || generatedX + offset[1] > (numColumns-1) ||
-                            generatedY + offset[0] < 0 || generatedY + offset[0] > (numRows-1))
+                    int neighbourX = generatedX + offset[1];
+                    int neighbourY = generatedY + offset[0];
+                    if(!(neighbourX < 0 || neighbourX > (numColumns-1) ||
+                            neighbourY < 0 || neighbourY > (numRows-1))
                             ){
-                        tileGrid[generatedX + offset[1]][generatedY+ offset[0]].incrementNumNeighbouringBombs();
+                        tileGrid[neighbourY][neighbourX].incrementNumNeighbouringBombs();
                     }
                 }
             }
@@ -69,6 +71,10 @@ public class MinesweeperGrid {
     public Tile[][] getTileGrid() { return tileGrid; }
     public int getNumColumns() { return numColumns; }
     public int getNumRows() { return numRows; }
+
+    public Tile getTile(int yLoc, int xLoc) {
+        return tileGrid[yLoc][xLoc];
+    }
 
 
     //prints out mineField[][] into the console, with bonus ascii formatting, WOW!
@@ -86,11 +92,8 @@ public class MinesweeperGrid {
 
             //print tile + spacers between each column-element in the row.
             for(int j = 0; j < numColumns; j++) {
-                if (!tileGrid[i][j].hasBeenPressed()) {    //not pressed = blank space.
-                    System.out.print("  |  " + " ");
-                }
-                else if(!tileGrid[i][j].getBombStatus()) { //pressed, but no bomb = line.
-                    System.out.print("  |  " + "-");
+                if(!tileGrid[i][j].getBombStatus()) { //pressed, but no bomb = line.
+                    System.out.print("  |  " + tileGrid[i][j].getNumBombNeighbours());
                 }
                 else {
                     System.out.print("  |  " + "x");        //pressed and bomb = cross.

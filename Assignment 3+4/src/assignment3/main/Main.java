@@ -10,7 +10,7 @@ public class Main{
     public static void main(String[] args){
 
         int fieldSize = 10;
-        int numBombs = 101;
+        int numBombs = 5;
 
         Field theField = new Field(fieldSize, fieldSize, numBombs);
         theField.printToConsole();
