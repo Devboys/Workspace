@@ -14,7 +14,6 @@ import javafx.event.EventHandler;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
-import javafx.stage.Popup;
 import javafx.stage.Stage;
 
 import java.util.Random;
@@ -26,14 +25,14 @@ public class GameGrid extends GridPane {
             {-1, -1}, {-1, 0 }, {-1, +1},
             { 0, -1},           { 0, +1},
             {+1, -1}, {+1, 0 }, {+1, +1}
-    }; //Neighbour-offset solution taken from user: Joshiah Krutz on codereview.stackexchange.com
+    }; //Neighbour-offset array taken from user: Joshiah Krutz on codereview.stackexchange.com
        //thread: Checking for neighbours more elegantly in Conway's Game of Life.
 
     private int numRows;
     private int numColumns;
     private int numBombs;
     private int numBombsDetected; //keeps track of the total number of user-detected bombs.
-    private int numFieldsAltered; //tracks total number of fields either cleared, flagged or detected.
+    private int numFieldsCorrect; //tracks total number of fields either cleared or detected.
     private boolean gameOver;
 
     //shared EventHandler for every button. Better solutions probably exist, but to track game over-status, this works.
@@ -66,35 +65,33 @@ public class GameGrid extends GridPane {
                 //handle Right-click input
                 else if (event.getButton().equals(MouseButton.SECONDARY)) {
 
-                    //if bomb, flag to FLAGGED
+                    //if bomb, flag to FLAGGED. Does not count toward win.
                     if (theButton.getState() == FieldButton.BtnState.DEFAULT) {
                         theButton.setState(FieldButton.BtnState.FLAGGED);
-                        numFieldsAltered++;
                     }
                     //if bomb, flag to DETECTED
                     else if (theButton.getState() == FieldButton.BtnState.BOMBED) {
                         theButton.setState(FieldButton.BtnState.DETECTED);
                         numBombsDetected++;
-                        numFieldsAltered++;
+                        numFieldsCorrect++;
                     }
                     //if flagged, return to DEFAULT
                     else if (theButton.getState() == FieldButton.BtnState.FLAGGED) {
                         theButton.setState(FieldButton.BtnState.DEFAULT);
-                        numFieldsAltered--;
                     }
                     //if detected, return to BOMBED
                     else if (theButton.getState() == FieldButton.BtnState.DETECTED) {
                         theButton.setState(FieldButton.BtnState.BOMBED);
                         numBombsDetected--;
-                        numFieldsAltered--;
+                        numFieldsCorrect--;
                     }
                 }
 
                 //console output keeps track of how many fields are left.
-                System.out.println(numFieldsAltered + " / " + numRows * numColumns);
+                System.out.println(numFieldsCorrect + " / " + numRows * numColumns);
 
                 //game is won when all bombs have been detected and all other fields have been revealed.
-                if(numBombsDetected == numBombs && numFieldsAltered == numRows*numColumns) {
+                if(numBombsDetected == numBombs && numFieldsCorrect == numRows*numColumns) {
                     System.out.println("You Win!");
                     gameOver = true;
 
@@ -124,7 +121,7 @@ public class GameGrid extends GridPane {
         this.numColumns = numColumns;
         this.numBombs = numBombs;
         numBombsDetected = 0;
-        numFieldsAltered = 0;
+        numFieldsCorrect = 0;
         gameOver = false;
 
         //setup the gameGrid to the given size.
@@ -210,7 +207,7 @@ public class GameGrid extends GridPane {
 
             theButton.setCascaded(true);
             theButton.setState(FieldButton.BtnState.CLEARED);
-            numFieldsAltered++;
+            numFieldsCorrect++;
 
             for(int[] offset : NEIGHBOURS){
 
