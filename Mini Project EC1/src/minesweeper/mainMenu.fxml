@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.RowConstraints?>
+
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="minesweeper.Controller">
+    <children>
+        <Button fx:id="startButton" layoutX="244.0" layoutY="286.0" mnemonicParsing="false" onAction="#startGame" prefHeight="57.0" prefWidth="113.0" text="Start Game" />
+        <GridPane layoutX="57.0" layoutY="26.0" prefHeight="115.0" prefWidth="91.0">
+            <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="211.0" minWidth="10.0" prefWidth="211.0" />
+            </columnConstraints>
+            <rowConstraints>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            </rowConstraints>
+            <children>
+                <Button fx:id="easyButton" mnemonicParsing="false" onAction="#presetSelectEasy" prefHeight="25.0" prefWidth="65.0" text="Easy" GridPane.rowIndex="1" />
+                <Button fx:id="mediumButton" mnemonicParsing="false" onAction="#presetSelectMedium" prefHeight="25.0" prefWidth="65.0" text="Medium" GridPane.rowIndex="2" />
+                <Button fx:id="hardButton" mnemonicParsing="false" onAction="#presetSelectHard" prefHeight="25.0" prefWidth="65.0" text="Hard" GridPane.rowIndex="3" />
+                <Label prefHeight="17.0" prefWidth="91.0" text="Difficulty Presets" />
+            </children>
+        </GridPane>
+        <GridPane layoutX="386.0" layoutY="26.0" prefHeight="115.0" prefWidth="200.0">
+            <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            </columnConstraints>
+            <rowConstraints>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            </rowConstraints>
+            <children>
+                <Label text="Bomb Count" GridPane.rowIndex="1" />
+                <Label text="Height" GridPane.rowIndex="2" />
+                <Label text="Width" GridPane.rowIndex="3" />
+                <TextField fx:id="bombCountInputField" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                <TextField fx:id="heightInputField" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                <TextField fx:id="widthInputField" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                <Label prefHeight="17.0" prefWidth="103.0" text="Custom Difficulty:" />
+                <Label fx:id="difficultyErrorLabel" textFill="RED" GridPane.columnIndex="1" />
+            </children>
+        </GridPane>
+        <GridPane layoutX="244.0" layoutY="219.0" prefHeight="57.0" prefWidth="187.0">
+            <columnConstraints>
+                <ColumnConstraints hgrow="ALWAYS" maxWidth="94.0" minWidth="10.0" prefWidth="88.0" />
+                <ColumnConstraints maxWidth="95.0" minWidth="10.0" prefWidth="92.0" />
+            </columnConstraints>
+            <rowConstraints>
+                <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            </rowConstraints>
+            <children>
+                <Label text="Bomb Amount:" />
+                <Label text="Tile Amount:" GridPane.rowIndex="1" />
+                <Label fx:id="bombAmountLabel" prefHeight="17.0" prefWidth="56.0" text="NaN" GridPane.columnIndex="1" />
+                <Label fx:id="tileAmountLabel" text="NaN" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            </children>
+        </GridPane>
+        <Button fx:id="customDifficultyConfirmButton" layoutX="493.0" layoutY="148.0" mnemonicParsing="false" onAction="#confirmCustomDifficulty" text="Confirm" />
+        <Label fx:id="startErrorLabel" layoutX="149.0" layoutY="353.0" prefHeight="17.0" prefWidth="304.0" text=" " textFill="RED" />
+    </children>
+</Pane>
