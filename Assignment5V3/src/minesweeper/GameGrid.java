@@ -152,7 +152,7 @@ public class GameGrid extends GridPane {
             }
         }
 
-        //put bombs at random locations on the board.
+        //place bombs at random locations on the board.
         Random randomGenerator  = new Random();
         for(int bombCounter = 0; bombCounter < numBombs; bombCounter++){
 
