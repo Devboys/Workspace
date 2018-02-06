@@ -84,9 +84,11 @@ public class FieldButton extends Button {
                     System.out.println("GAME OVER");
                     break;
                 case LOSE:
+                    setText("");
                     setStyle(LOSE);
                     break;
                 case WIN:
+                    setText("");
                     setStyle(WIN);
                     break;
                 default:
