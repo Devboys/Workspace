@@ -1,6 +1,6 @@
 # Workspace
-Personal workspace, feel free to look around.
+Personal workspace.
 
-Will include:
-- Solo School code work.
+Includes:
+- Solo school code work and assignments.
 - Personal projects.
