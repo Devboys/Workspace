@@ -2,6 +2,5 @@
 Personal workspace, feel free to look around.
 
 Will include:
-- School code work.
+- Solo School code work.
 - Personal projects.
-- Just about anything else
