@@ -22,14 +22,14 @@ public interface Car {
      * @param power how much power in percentage
      * @return speed in km/h
      */
-    double driveForward(int power);
+    double driveForward(int power) throws IsNotStartedException;
 
     /**
      * * USe the engine to drive the car backwards
      * @param power how much power in percentage
      * @return speed in km/h
      */
-    double driveBackwards(int power);
+    double driveBackwards(int power) throws IsNotStartedException;
 
     /**
      * get the car's licenseplate

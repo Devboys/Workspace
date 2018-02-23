@@ -2,21 +2,18 @@ import javafx.scene.paint.Color;
 
 public class Tesla implements Car{
 
-    boolean running;
+    boolean running = false;
     String licensePlate = "ABC123";
     Engine engine = new TeslaEngine();
     Color carColor = Color.RED;
-    public double speedX = 0.0;
-    public double speedY = 0.0;
-    public double posX = 0.0;
-    public double posY = 0.0;
+    private double posY = 0.0;
 
-    private enum Direction {LEFT, RIGHT, STRAIGHT};
-    Direction directionLR = Direction.STRAIGHT;
 
-    public Tesla(Color color) {
-        carColor = color;
+    public Tesla(Color customColor, String licensePlate) {
+        carColor = customColor;
+        this.licensePlate = licensePlate;
     }
+
     public Tesla() {
         //Default constructor...
     }
@@ -38,7 +35,7 @@ public class Tesla implements Car{
 
     @Override
     public boolean start() {
-        if(running = false) {
+        if(running == false) {
             engine.start();
             running = true;
             return true;
@@ -48,7 +45,7 @@ public class Tesla implements Car{
 
     @Override
     public boolean stop() {
-        if(running = true) {
+        if(running == true) {
             engine.stop();
             running = false;
             return true;
@@ -65,14 +62,22 @@ public class Tesla implements Car{
     @Override
     public double driveForward(int power) throws IsNotStartedException {
         if(running == false) {
-            throw new IsNotStartedException();
+            throw new IsNotStartedException("Car has not been started");
+        }
+        else {
+            posY += power;
+            return posY;
         }
     }
 
     @Override
     public double driveBackwards(int power) throws IsNotStartedException{
         if(running == false) {
-            throw new IsNotStartedException();
+            throw new IsNotStartedException("Car has not been started");
+        }
+        else {
+            posY -= power;
+            return posY;
         }
     }
 }

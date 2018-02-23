@@ -22,7 +22,7 @@ public interface Engine {
      * set the engine to move forward
      * @return if engine successfully changed (false if already in forwards)
      */
-    boolean Forward();
+    boolean forward();
 
     /**
      *  Drives the engine

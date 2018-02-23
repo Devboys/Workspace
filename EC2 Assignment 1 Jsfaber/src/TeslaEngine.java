@@ -32,13 +32,12 @@ public class TeslaEngine implements Engine {
     }
 
     @Override
-    public boolean Forward() {
+    public boolean forward() {
         if(directionFB != Direction.FORWARD) {
             directionFB = Direction.FORWARD;
             return true;
         }
         else return false;
-
     }
 
     @Override
