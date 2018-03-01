@@ -1,17 +1,25 @@
-package com.company;
+package Jsfaber.EC2.MyLinkedList;
 
-//FIRST ELEMENT = ELEMENT 0;
-//LAST ELEMENT = ELEMENT SIZE-1.
+import java.util.ArrayList;
+import java.util.List;
 
-public class MyLinkedList {
+public class MyLinkedList<T> {
 
-    ListNode first = null;
-    ListNode last = null;
+    private ListNode first = null;
+    private ListNode last = null;
 
     private int size = 0;
 
+    public int getSize(){ return size; }
 
-    public void add(int index, int data) {
+    /**
+     * Places a new element with a value of Data, at the given Index.
+     * If an element exists at the current index, it will be pushed forward one index.
+     *
+     * @param index The index of the element in the list.
+     * @param data The value of the element.
+     */
+    public void add(int index, T data) {
         //if new node is not a new first or last node
         ListNode newNode;
 
@@ -41,30 +49,41 @@ public class MyLinkedList {
         size++;
     }
 
-    public void add(int data){
+    /**
+     * Adds an element with a given value to the end of the list (i.e. the last index).
+     *
+     * @param data the desired value of the element
+     */
+    public void add(T data){
         add(size , data);
     }
 
-    //with switch
-    //public boolean add()
-
-    public int get(int index) {
+    /**
+     * @param index The index of the element
+     * @return the value (of whatever type) at the given index in the list.
+     */
+    public T get(int index) {
         //return node value at index.
         ListNode currentNode = first;
 
         for(int i = 0; i < index; i++){
             currentNode = currentNode.getNext();
         }
-        return currentNode.getData();
+        return (T)currentNode.getData();
     }
 
-    public int[] getAll() {
-        int[] returnArray = new int[size];
+    /**
+     * @return Returns a list with the data-value of every element in the linked list.
+     */
+    @SuppressWarnings("unchecked")
+    public List<T> toList() {
+
+        List<T> returnArray = new ArrayList<T>();
 
         ListNode currentNode = first;
 
         for(int i = 0; i < size; i++){
-            returnArray[i] = currentNode.getData();
+            returnArray.add((T)currentNode.getData());
             currentNode = currentNode.getNext();
         }
 
