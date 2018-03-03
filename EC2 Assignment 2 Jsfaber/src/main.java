@@ -3,16 +3,24 @@ import Jsfaber.EC2.MyLinkedList.*;
 
 public class main {
     public static void main(String [] args){
-        MyLinkedList<Integer> myList = new MyLinkedList<Integer>();
-        myList.add(7);
-        myList.add(14);
-        myList.add(21);
-        myList.add(28);
+        MyLinkedList<String> myList = new MyLinkedList<String>();
+        myList.add("F");
+        myList.add("B");
+        myList.add("C");
+        myList.add("D");
+        myList.add("G");
 
-        List<Integer> outputArray = myList.toList();
 
-        for(int i = 0; i < 4; i++){
-            System.out.println(Integer.toString(outputArray.get(i)));
+        myList.remove(0);
+        myList.remove(3);
+
+        myList.add(0, "A");
+        myList.add(4, "E");
+
+        List<String> outputArray =  myList.toList();
+
+        for(int i = 0; i < outputArray.size(); i++){
+            System.out.println(outputArray.get(i));
         }
     }
 }
