@@ -1,5 +1,6 @@
 package Jsfaber.EC2.MyLinkedList;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -124,7 +125,8 @@ public class MyLinkedList<T>{
 
     public List<T> toList() {
 
-        List<T> returnArray = new ArrayList<>();
+        //declare a list with a fitting capacity to reduce arraylist shenanigans
+        List<T> returnArray = new ArrayList<>(size);
 
         ListNode currentNode = first;
 
@@ -133,6 +135,18 @@ public class MyLinkedList<T>{
             currentNode = currentNode.getNext();
         }
         return returnArray;
+    }
+
+    public Object[] toArray(){
+        Object[] returnArray = new Object[size];
+        ListNode currentNode = first;
+
+        for(int i = 0; i < size; i++){
+            returnArray[i] = currentNode.getData();
+            currentNode = currentNode.getNext();
+        }
+        return returnArray;
+
     }
 
     ListNode getNode(int index){
