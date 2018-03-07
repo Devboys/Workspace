@@ -1,33 +1,51 @@
-package Jsfaber.EC2.MyLinkedList;
+package Jsfaber.EC2.MyCircularList;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MyLinkedList<T>{
+public class MyCircularList<T>{
 
     ListNode first;
     ListNode last;
     int size;
 
-    public MyLinkedList(){
+
+    /**
+     * Construct an empty CircularList
+     */
+    public MyCircularList(){
         size = 0;
         first = null;
         last = null;
 
     }
 
+    /**
+     * @return the number of elements in the list
+     */
     public int getSize(){ return size; }
 
-    //if no index specified, add to end of list.
+    /**
+     * Inserts an element with the given data-value to the end of the list
+     * @param data The value of the element to be added
+     */
     public void add(T data){
         add(size , data);
     }
 
-    //insert element at specified index, 'nudging' all elements
+    /**
+     * Insert an element with the given data-value, at the given index
+     * @param index The index where the element should be added
+     * @param data The value of the element to be added
+     */
     public void add(int index, T data){
+        //make circular - convert out-of-bounds index to index within list.
+        if(size != 0) index = index % (size+1);
+
         ListNode newNode;
         if (size == 0) {
             first = last = new ListNode(data, null);
+            last.setNext(first);
             size++;
         }
 
@@ -35,13 +53,16 @@ public class MyLinkedList<T>{
         else if(index == 0) {
             //get previous first node
             ListNode newNext = getNode(index);
-
             first = new ListNode(data, newNext);
+
+            //make circular
+            last.setNext(first);
+
             size++;
         }
         //if new node is going to be anything but the last node or first node
         else if (index < size) {
-            ListNode newPrevious = getNode(index - 1);
+            ListNode newPrevious = getNode(index-1); // HERE
             ListNode newNext = getNode(index);
 
             newNode = new ListNode(data, newNext);
@@ -51,20 +72,26 @@ public class MyLinkedList<T>{
 
         //if the new node is going to be the last node
         else if (index == size) {
-            newNode = new ListNode(data, null);
+            newNode = new ListNode(data, first);
             last.setNext(newNode);
             last = newNode;
             size++;
         }
-        else{
-            throw new IndexOutOfBoundsException("Index out of bounds when adding at index: " + index);
-        }
     }
 
+    /**
+     * Removes the element currently occupying the given index
+     * @param index the index of the element to be removed.
+     */
     public void remove(int index) {
+        //make circular - convert out-of-bounds index to index within list.
+        if(size != 0) index = index % (size+1);
+
         //if removing the first node.
         if(index == 0){
             first = first.getNext();
+            last.setNext(first);
+
             size--;
         }
         //if removing anything but the last or first node
@@ -79,19 +106,24 @@ public class MyLinkedList<T>{
         else if(index == size - 1){
             ListNode newLast = getNode(index-1);
             last = newLast;
-            newLast.setNext(null);
+            last.setNext(first);
             size--;
-        }
-        //if removing a non-existent element(out of bounds)
-        else {
-            throw new IndexOutOfBoundsException("Index out of bounds when removing at index: " + index);
         }
     }
 
+    /**
+     * Adds all values of the given array to the end of the list in sequential order.
+     * @param dataArray the array of values to be added.
+     */
     public void addAll(T[] dataArray) {
         addAll(size, dataArray);
     }
 
+    /**
+     * Adds all values of the given array to array in sequential order. Elements will be added from the given index.
+     * @param startIndex The index where the first element of the array should be placed
+     * @param dataArray The array of values to be added
+     */
     public void addAll(int startIndex, T[] dataArray) {
         int numAdditions = dataArray.length;
 
@@ -104,12 +136,20 @@ public class MyLinkedList<T>{
         }
     }
 
+    /**
+     * Removes all elements between the two given indexes.
+     * @param indexStart the start index of the list of elements to be removed.
+     * @param indexEnd the end index of the list of elements to be removed
+     */
     public void removeAll(int indexStart, int indexEnd) {
         for(int i = indexStart; i <= indexEnd; i++){
             remove(indexStart);
         }
     }
 
+    /**
+     * Completely clears the array of all elements.
+     */
     public void clear() {
         //leave all elements to garbage collection by removing any external reference.
         first = null;
@@ -117,11 +157,18 @@ public class MyLinkedList<T>{
         size = 0;
     }
 
+    /**
+     * @param index the index of the element to return
+     * @return the value of the element at the given index
+     */
     public T get(int index) {
-
         return (T) getNode(index).getData();
     }
 
+    /**
+     * Returns a list of all elements in the CircularList. The returned list retains object-types.
+     * @return a list of all elements in the CircularList in identical order.
+     */
     public List<T> toList() {
 
         //declare a list with a fitting capacity to reduce arraylist shenanigans
@@ -136,6 +183,11 @@ public class MyLinkedList<T>{
         return returnArray;
     }
 
+    /**
+     * Returns an array of all elements in the CircularList. The returned array is of type Object[]. Call
+     * Call .toList() if you want to retain value-types.
+     * @return an array of all values in the CircularList in identical order.
+     */
     public Object[] toArray(){
         Object[] returnArray = new Object[size];
         ListNode currentNode = first;
@@ -148,9 +200,12 @@ public class MyLinkedList<T>{
 
     }
 
-
-
+    /* Class-scope method used for fetching the node at a given index.
+     * Positive out-of-bounds indexes will be converted to fit the list */
     private ListNode getNode(int index){
+        //make circular - convert out-of-bounds index to index within list.
+        if(size != 0) index = index % (size+1);
+
         if(index > 0 && index < size -1){
             ListNode currentNode = first;
 
