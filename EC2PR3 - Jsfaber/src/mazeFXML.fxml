@@ -9,7 +9,7 @@
     <top>
         <FlowPane prefHeight="21.0" prefWidth="600.0" BorderPane.alignment="CENTER">
             <children>
-                <Button fx:id="drawButton" mnemonicParsing="false" onAction="#drawMaze" text="Draw something" />
+                <Button fx:id="drawButton" mnemonicParsing="false" onAction="#newMaze" text="New Maze" />
             </children>
         </FlowPane>
     </top>

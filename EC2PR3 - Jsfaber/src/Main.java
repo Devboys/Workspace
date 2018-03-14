@@ -6,14 +6,16 @@ import javafx.stage.Stage;
 
 public class Main extends Application {
 
+    public static final int SCREEN_WIDTH = 600;
+    public static final int SCREEN_HEIGHT = 500;
+
     @Override
     public void start(Stage primaryStage) throws Exception{
         Parent root = FXMLLoader.load(getClass().getResource("mazeFXML.fxml"));
-        primaryStage.setTitle("MazeGen");
-        primaryStage.setScene(new Scene(root, 600, 500));
+        primaryStage.setTitle("Recursive Maze Generator");
+        primaryStage.setScene(new Scene(root, SCREEN_WIDTH, SCREEN_HEIGHT));
         primaryStage.show();
     }
-
 
     public static void main(String[] args) {
         launch(args);
