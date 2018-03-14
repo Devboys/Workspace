@@ -11,12 +11,14 @@ public class Controller {
     Canvas canvas;
 
     Cell[][] grid;
-    RecursiveMaze rMaze = new RecursiveMaze(3);
+    RecursiveMaze rMaze;
 
-    private static final int cellSize = 10;
+    private static final int cellSize = 20;
 
     public void drawMaze() {
+        rMaze = new RecursiveMaze(10);
         GraphicsContext g = canvas.getGraphicsContext2D();
+        g.clearRect(0,0, 600, 500);
         grid = rMaze.getArray();
 
         for (int x = 0; x < rMaze.getWidth(); x++) {

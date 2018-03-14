@@ -14,7 +14,8 @@ public class RecursiveMaze {
         NORTH,
         SOUTH,
         EAST,
-        WEST
+        WEST,
+        DEFAULT
     }
     private static final int NUMDIRECTIONS = 4;
     private static final int[] STARTPOS = {0,0};
@@ -72,7 +73,12 @@ public class RecursiveMaze {
 
         System.out.println(availableDirections.size());
         while(availableDirections.size() != 0) {
-            Direction nextDirection = availableDirections.get(rnd.nextInt(availableDirections.size()));
+            availableDirections = getAvailableCells(x, y);
+
+            Direction nextDirection = Direction.DEFAULT;
+            if(availableDirections.size() != 0) {
+                nextDirection = availableDirections.get(rnd.nextInt(availableDirections.size()));
+            }
 
             switch (nextDirection) {
                 case NORTH:
@@ -109,6 +115,8 @@ public class RecursiveMaze {
                     eastCell.setWest(true);
                     recursiveCall(x+1, y);
                     break;
+                case DEFAULT:
+                    System.out.println("heyo");
             }
         }
 
