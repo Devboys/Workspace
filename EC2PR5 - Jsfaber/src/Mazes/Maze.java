@@ -14,6 +14,8 @@ public abstract class Maze {
 
     protected Random rnd;
 
+    protected boolean finished;
+
     protected enum Edges {
         NORTH,
         SOUTH,
@@ -27,13 +29,10 @@ public abstract class Maze {
         rnd = new Random();
         maze = new Cell[width][height];
     }
-
     /**@param x The x-coordinate of the element.
      * @param y The y-coordinate of the element.
      * @return The Cell-element at the given position in the maze.*/
     public Cell get(int x, int y) {return maze[x][y]; }
-
-
     /**Picks a random element on one of the outer walls of the maze and removes its outermost wall.
      * @return the randomly selected element.
      */
@@ -87,10 +86,14 @@ public abstract class Maze {
         }
         return exitCell;
     }
-
     /** @return the number of elements in the x-direction of the maze. */
     public int getWidth(){ return width; }
-
     /** @return the number of elements in the y-direction of the maze */
     public int getHeight(){ return height; }
+
+    public boolean isFinished() {
+        return finished;
+    }
+
+    public abstract void generate() throws InterruptedException;
 }

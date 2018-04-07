@@ -10,6 +10,8 @@ public class KruskalMaze extends Maze {
 
     private int numRoots;
 
+    private Object stepLock;
+
     private enum Direction {
         NORTH,
         SOUTH,
@@ -17,7 +19,7 @@ public class KruskalMaze extends Maze {
         WEST
     }
 
-    public KruskalMaze(int size){
+    protected KruskalMaze(int size, Object lock){
         super(size);
 
         maze = new KruskalCell[width][height];
@@ -29,19 +31,31 @@ public class KruskalMaze extends Maze {
                 maze[i][j] = new KruskalCell();
             }
         }
+
+        stepLock = lock;
+    }
+
+    @Override
+    public void generate() throws InterruptedException {
         generateMaze();
 
         startCell = assignRandomExitCell();
         startCell.setStart(true);
         endCell = assignRandomExitCell();
         endCell.setEnd(true);
+
+        finished = true;
     }
 
     /**Generates a maze using Kruskal's Algorithm. */
-    private void generateMaze(){
+    private void generateMaze() throws InterruptedException{
+
         // Kruskal's algorithm continues until the entire maze is a single set. In this implemenetation, the set is
         // identified by its root-node, so when the number of root-nodes is equal to 1, kruskals algorithm has finished.
         while(numRoots > 1){
+            //wait before each step is taken.
+            synchronized (stepLock){ stepLock.wait(); }
+
             int currX = rnd.nextInt(width);
             int currY = rnd.nextInt(height);
 

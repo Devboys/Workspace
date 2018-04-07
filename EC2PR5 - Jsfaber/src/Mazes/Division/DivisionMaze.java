@@ -5,121 +5,91 @@ import Mazes.Maze;
 
 public class DivisionMaze extends Maze {
 
-    public DivisionMaze(int size){
+    private Object stepLock;
+
+    protected DivisionMaze(int size, Object lock){
         super(size);
+
+        stepLock = lock;
 
         for(int i = 0; i < width; i++){
             for(int j = 0; j < height; j++){
                 maze[i][j] = new DivisionCell();
             }
         }
+    }
 
-        boolean vertical = rnd.nextBoolean();
-        if(vertical)
-            divideVertical(maze);
-        else{
-            divideHorizontal(maze);
-        }
+    /**Generates the maze using recursive divisor. The generation will call wait() on the declared lock between each
+     * division, and will require a notify() to continue.
+     * @throws InterruptedException*/
+    public void generate() throws InterruptedException{
+        divide(maze);
+
         fillEdges();
 
         startCell = assignRandomExitCell();
         startCell.setStart(true);
         endCell = assignRandomExitCell();
         endCell.setEnd(true);
+
+        finished = true;
     }
 
-    private void divideHorizontal(Cell[][] region){
+    /**Generates a maze using the recursive division algorithm
+     * @param region
+     * @throws InterruptedException
+     */
+    private void divide(Cell[][] region) throws InterruptedException{
+        //wait before each step.
+        synchronized (stepLock){ stepLock.wait(); }
 
         int regionWidth = region.length;
         int regionHeight = region[0].length;
 
-        //the division will produce two sub-regions.
-        Cell[][] upperRegion;
-        Cell[][] lowerRegion;
+        //region height/width comparison idea from: Jamis Buck, at weblog.jamisbuck.org.
+        boolean isVertical = (regionWidth > regionHeight);
 
-        //draw a random horizontal line(enable southern walls of all elements in a random row)
-        int divisorRowIndex = rnd.nextInt(regionHeight);
-        for(int i = 0; i < regionWidth; i++){
-            region[i][divisorRowIndex].setSouthOpen(false);
+        //choose divisor line (any field but the southernmost / easternmost, since that was previous divisor line)
+        int divisorIndex = (isVertical) ? rnd.nextInt(regionWidth-1) : rnd.nextInt(regionHeight-1);
+        for(int i = 0; i < (isVertical ? regionHeight : regionWidth); i++){
+            if(isVertical) region[divisorIndex][i].setEastOpen(false);
+            else region[i][divisorIndex].setSouthOpen(false);
         }
 
-        //punch a hole in the recently created line.
-        int holeIndex = rnd.nextInt(regionWidth);
-        region[holeIndex][divisorRowIndex].setSouthOpen(true);
+        //punch hole
+        int holeIndex = isVertical ? rnd.nextInt(regionHeight) : rnd.nextInt(regionWidth);
+        if(isVertical) region[divisorIndex][holeIndex].setEastOpen(true);
+        else region[holeIndex][divisorIndex].setSouthOpen(true);
 
-        //define new regions
-        //upper region is everything from 0 to rowIndex.
-        int upperWidth = regionWidth;
-        int upperHeight = divisorRowIndex+1;
-        upperRegion = new Cell[upperWidth][upperHeight];
-
-        for(int i = 0; i < upperWidth; i++){
-            for(int j = 0; j < upperHeight; j++){
-                upperRegion[i][j] = region[i][j];
+        //define left / upper region.
+        int r1Width = isVertical ? divisorIndex+1 : regionWidth;
+        int r1Height = isVertical ? regionHeight : divisorIndex+1;
+        Cell[][] r1 = new Cell[r1Width][r1Height];
+        for(int i = 0; i < r1Width; i++){
+            for(int j = 0; j < r1Height; j++){
+                r1[i][j] = region[i][j];
             }
         }
 
-        //lower region is everything from rowindex+1 to height.
-        int lowerWidth = regionWidth;
-        int lowerHeight = regionHeight - upperHeight;
-        lowerRegion = new Cell[lowerWidth][lowerHeight];
-
-        for(int i = 0; i < lowerWidth; i++){
-            for(int j = 0; j < lowerHeight; j++){
-                lowerRegion[i][j] = region[i][j + upperHeight];
+        //define right / lower region
+        int r2Width = isVertical ? regionWidth - r1Width : regionWidth;
+        int r2Height = isVertical ? regionHeight : regionHeight - r1Height;
+        Cell[][] r2 = new Cell[r2Width][r2Height];
+        for(int i = 0; i < r2Width; i++){
+            for(int j = 0; j < r2Height; j++){
+                if(isVertical) r2[i][j] = region[i + r1Width][j];
+                else r2[i][j] = region[i][j + r1Height];
             }
         }
 
-        //divide new regions vertically only if they have more than one column in them.
-        if(lowerRegion[0].length > 1) divideVertical(lowerRegion);
-        if(upperRegion[0].length > 1) divideVertical(upperRegion);
+        //a step has now been taken, wait until next notify.
+
+        //divide each region as its own field only if it theres enough cells for it to be divided.
+        if(r1Width > 1 && r1Height > 1) divide(r1);
+        if(r2Width > 1 && r2Height > 1) divide(r2);
     }
 
-    private void divideVertical(Cell[][] region){
-
-        int regionWidth = region.length;
-        int regionHeight = region[0].length;
-
-        //the division will produce two sub-regions.
-        Cell[][] leftRegion;
-        Cell[][] rightRegion;
-
-        //draw a random vertical line (enable eastern walls of all elements in a random column)
-        int divisorColumnIndex = rnd.nextInt(regionWidth);
-        for(int i = 0; i <  regionHeight; i++){
-            region[divisorColumnIndex][i].setEastOpen(false);
-        }
-
-        //punch a hole in the recently created line
-        int holeIndex = rnd.nextInt(regionHeight);
-        region[divisorColumnIndex][holeIndex].setEastOpen(true);
-
-        //define new regions
-        //left region is everything from 0 to columnindex
-        int leftWidth = divisorColumnIndex+1;
-        int leftHeight = regionHeight;
-        leftRegion = new Cell[leftWidth][leftHeight];
-        for(int i = 0; i < leftWidth; i++){
-            for(int j = 0; j < leftHeight; j++){
-                leftRegion[i][j] = region[i][j];
-            }
-        }
-
-        //right region is everything from columnindex+1 to width
-        int rightWidth = regionWidth - leftWidth;
-        int rightHeight = regionHeight;
-        rightRegion = new Cell[rightWidth][rightHeight];
-        for(int i = 0; i < rightWidth; i++){
-            for(int j = 0; j < rightHeight; j++){
-                rightRegion[i][j] = region[i + leftWidth][j];
-            }
-        }
-
-        //divide region horizontally only if they have more than one row in them.
-        if(leftRegion.length > 1) divideHorizontal(leftRegion);
-        if(rightRegion.length > 1) divideHorizontal(rightRegion);
-    }
-
+    /**Fills all outer walls of the maze with walls.*/
     private void fillEdges(){
         //fill north edge
         for(int i = 0; i < width; i++){

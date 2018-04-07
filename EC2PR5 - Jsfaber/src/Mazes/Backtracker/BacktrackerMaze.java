@@ -15,11 +15,14 @@ public class BacktrackerMaze extends Maze {
         DEFAULT
     }
 
-    public BacktrackerMaze(int size){
-        this(size, 0, 0);
+    private int startX, startY;
+    private Object stepLock;
+
+    public BacktrackerMaze(int size, Object lock){
+        this(size, 0, 0, lock);
     }
 
-    public BacktrackerMaze(int size, int startX, int startY){
+    public BacktrackerMaze(int size, int x, int y, Object lock){
         super(size);
         maze = new BacktrackerCell[width][height];
 
@@ -28,66 +31,83 @@ public class BacktrackerMaze extends Maze {
                 maze[i][j] = new BacktrackerCell();
             }
         }
-        digTile(startY,startY);
+
+        startX = x;
+        startY = y;
+        stepLock = lock;
+    }
+
+    public void generate() throws InterruptedException{
+        digTile(startX, startY);
 
         startCell = assignRandomExitCell();
         startCell.setStart(true);
-
         endCell = assignRandomExitCell();
         endCell.setEnd(true);
+
+        finished = true;
     }
 
     //Recursive-backtracker algorithm.
-    private void digTile(int x, int y){
+    private void digTile(int x, int y) throws InterruptedException {
         BacktrackerCell currentCell = (BacktrackerCell) maze[x][y];
         currentCell.setVisited(true);
 
         ArrayList<Direction> availableDirections;
 
         boolean neighboursAvailable = true;
-        while(neighboursAvailable) {
 
-            //availableDirections holds all available directions from the cell at the given position.
-            availableDirections = getAvailableCells(x, y);
+        synchronized (stepLock) {
+            while (neighboursAvailable) {
+                //availableDirections holds all available directions from the cell at the given position.
+                availableDirections = getAvailableCells(x, y);
 
-            Direction nextDirection = Direction.DEFAULT;
-            if(availableDirections.size() != 0) {
-                nextDirection = availableDirections.get(rnd.nextInt(availableDirections.size()));
-            }
+                Direction nextDirection = Direction.DEFAULT;
+                if (availableDirections.size() != 0) {
+                    nextDirection = availableDirections.get(rnd.nextInt(availableDirections.size()));
+                }
+                switch (nextDirection) {
+                    case NORTH:
+                        Cell northCell = maze[x][y - 1];
+                        availableDirections.remove(nextDirection);
+                        currentCell.setNorthOpen(true);
+                        northCell.setSouthOpen(true);
 
-            switch (nextDirection) {
-                case NORTH:
-                    Cell northCell = maze[x][y-1];
-                    availableDirections.remove(nextDirection);
-                    currentCell.setNorthOpen(true);
-                    northCell.setSouthOpen(true);
-                    digTile(x, y-1);
-                    break;
-                case SOUTH:
-                    Cell southCell = maze[x][y+1];
-                    availableDirections.remove(nextDirection);
-                    currentCell.setSouthOpen(true);
-                    southCell.setNorthOpen(true);
-                    digTile(x, y+1);
-                    break;
-                case WEST:
-                    Cell westCell = maze[x-1][y];
-                    availableDirections.remove(nextDirection);
-                    currentCell.setWestOpen(true);
-                    westCell.setEastOpen(true);
-                    digTile(x-1, y);
-                    break;
-                case EAST:
-                    Cell eastCell = maze[x+1][y];
-                    availableDirections.remove(nextDirection);
-                    currentCell.setEastOpen(true);
-                    eastCell.setWestOpen(true);
-                    digTile(x+1, y);
-                    break;
-                case DEFAULT:
-                    //if nextDirection is default, it must mean that no valid directions are available.
-                    neighboursAvailable = false;
-                    break;
+                        stepLock.wait();
+                        digTile(x, y - 1);
+                        break;
+                    case SOUTH:
+                        Cell southCell = maze[x][y + 1];
+                        availableDirections.remove(nextDirection);
+                        currentCell.setSouthOpen(true);
+                        southCell.setNorthOpen(true);
+
+                        stepLock.wait();
+                        digTile(x, y + 1);
+                        break;
+                    case WEST:
+                        Cell westCell = maze[x - 1][y];
+                        availableDirections.remove(nextDirection);
+                        currentCell.setWestOpen(true);
+                        westCell.setEastOpen(true);
+
+                        stepLock.wait();
+                        digTile(x - 1, y);
+                        break;
+                    case EAST:
+                        Cell eastCell = maze[x + 1][y];
+                        availableDirections.remove(nextDirection);
+                        currentCell.setEastOpen(true);
+                        eastCell.setWestOpen(true);
+
+                        stepLock.wait();
+                        digTile(x + 1, y);
+                        break;
+                    case DEFAULT:
+                        //if nextDirection is default, it must mean that no valid directions are available.
+                        neighboursAvailable = false;
+                        break;
+                }
             }
         }
     }
