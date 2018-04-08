@@ -53,9 +53,6 @@ public class KruskalMaze extends Maze {
         // Kruskal's algorithm continues until the entire maze is a single set. In this implemenetation, the set is
         // identified by its root-node, so when the number of root-nodes is equal to 1, kruskals algorithm has finished.
         while(numRoots > 1){
-            //wait before each step is taken.
-            synchronized (stepLock){ stepLock.wait(); }
-
             int currX = rnd.nextInt(width);
             int currY = rnd.nextInt(height);
 
@@ -65,6 +62,9 @@ public class KruskalMaze extends Maze {
 
             //check if the cells are in the same set.
             if(currCell.getRoot() != nextCell.getRoot()){
+                //wait before each step is taken.
+                synchronized (stepLock){ stepLock.wait(); }
+
                 switch (randomDirection){
                     case NORTH:
                         currCell.setNorthOpen(true);

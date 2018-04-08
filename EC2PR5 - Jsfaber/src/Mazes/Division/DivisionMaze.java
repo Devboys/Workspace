@@ -82,9 +82,7 @@ public class DivisionMaze extends Maze {
             }
         }
 
-        //a step has now been taken, wait until next notify.
-
-        //divide each region as its own field only if it theres enough cells for it to be divided.
+        //divide each region as its own field only if it there are enough cells for it to be divided.
         if(r1Width > 1 && r1Height > 1) divide(r1);
         if(r2Width > 1 && r2Height > 1) divide(r2);
     }

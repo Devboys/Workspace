@@ -6,6 +6,9 @@ public abstract class Maze {
 
     protected Cell startCell;
     protected Cell endCell;
+    //
+    protected int startX = -1;
+    protected int startY = -1;
 
     protected int height;
     protected int width;
@@ -37,8 +40,8 @@ public abstract class Maze {
      * @return the randomly selected element.
      */
     protected Cell assignRandomExitCell(){
-        int exitX;
-        int exitY;
+        int exitX = -99;
+        int exitY = -99;
         Cell exitCell = null;
         boolean duplicate = true;
 
@@ -84,12 +87,20 @@ public abstract class Maze {
                     break;
             }
         }
+
+        if(startX == -1 && startY == -1){
+            startX = exitX;
+            startY = exitY;
+        }
         return exitCell;
     }
     /** @return the number of elements in the x-direction of the maze. */
     public int getWidth(){ return width; }
     /** @return the number of elements in the y-direction of the maze */
     public int getHeight(){ return height; }
+
+    public int getStartX() { return startX; }
+    public int getStartY() { return startY; }
 
     public boolean isFinished() {
         return finished;

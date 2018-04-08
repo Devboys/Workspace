@@ -3,7 +3,6 @@ import Mazes.Division.DivisionThread;
 import Mazes.Kruskal.KruskalThread;
 import Mazes.Maze;
 import Mazes.MazeSolver;
-import Mazes.MazeThread;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -81,6 +80,14 @@ public class Controller {
                     g.fillRect(x * cellSize, (y*cellSize),
                             cellSize, cellSize);
                 }
+
+                //draw paths
+                if(currMaze.get(x, y).isPath()){
+                    int pathIndent = 4;
+                    g.setFill(Color.rgb(150, 150, 150, 0.5));
+                    g.fillRect(x*cellSize+pathIndent, y*cellSize + pathIndent,
+                            cellSize-pathIndent*2, cellSize-pathIndent*2);
+                }
                 //Draw North walls
                 if(!currMaze.get(x, y).isNorthOpen()){
                     g.strokeLine(x*cellSize, y*cellSize, (x+1)*cellSize, y*cellSize);
@@ -155,7 +162,8 @@ public class Controller {
 
     public void solve(){
         if(currMaze != null && currMaze.isFinished()) {
-            MazeSolver.solveMaze(currMaze);
+            MazeSolver solver = new MazeSolver(currMaze);
+            solver.solve();
             drawMaze();
         }
     }

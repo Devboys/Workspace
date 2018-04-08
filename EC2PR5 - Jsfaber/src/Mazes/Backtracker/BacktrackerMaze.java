@@ -15,7 +15,7 @@ public class BacktrackerMaze extends Maze {
         DEFAULT
     }
 
-    private int startX, startY;
+    private int initX, initY;
     private Object stepLock;
 
     public BacktrackerMaze(int size, Object lock){
@@ -24,33 +24,40 @@ public class BacktrackerMaze extends Maze {
 
     public BacktrackerMaze(int size, int x, int y, Object lock){
         super(size);
-        maze = new BacktrackerCell[width][height];
+        maze = new Cell[width][height];
 
         for(int i = 0; i < width; i++){
             for(int j = 0; j < height; j++){
-                maze[i][j] = new BacktrackerCell();
+                maze[i][j] = new Cell();
             }
         }
 
-        startX = x;
-        startY = y;
+        initX = x;
+        initY = y;
         stepLock = lock;
     }
 
     public void generate() throws InterruptedException{
-        digTile(startX, startY);
+        digTile(initX, initY);
 
         startCell = assignRandomExitCell();
         startCell.setStart(true);
         endCell = assignRandomExitCell();
         endCell.setEnd(true);
 
+        //reset visited so that it can be re-used for solving.
+        for(int i = 0; i < width; i++){
+            for(int j = 0; j < height; j++){
+                maze[i][j].setVisited(false);
+            }
+        }
+
         finished = true;
     }
 
     //Recursive-backtracker algorithm.
     private void digTile(int x, int y) throws InterruptedException {
-        BacktrackerCell currentCell = (BacktrackerCell) maze[x][y];
+        Cell currentCell = maze[x][y];
         currentCell.setVisited(true);
 
         ArrayList<Direction> availableDirections;
@@ -118,32 +125,32 @@ public class BacktrackerMaze extends Maze {
 
         //NORTH
         try {
-            BacktrackerCell northCell = (BacktrackerCell) maze[x][y - 1];
-            if (!northCell.isVisited()) {
+            Cell northCell = maze[x][y - 1];
+            if (northCell.isNotVisited()) {
                 returnArray.add(Direction.NORTH);
             }
         }catch(IndexOutOfBoundsException e){}
 
         //SOUTH
         try {
-            BacktrackerCell southCell = (BacktrackerCell) maze[x][y + 1];
-            if (!southCell.isVisited()) {
+            Cell southCell =  maze[x][y + 1];
+            if (southCell.isNotVisited()) {
                 returnArray.add(Direction.SOUTH);
             }
         }catch(IndexOutOfBoundsException e){}
 
         //EAST
         try {
-            BacktrackerCell eastCell = (BacktrackerCell) maze[x + 1][y];
-            if (!eastCell.isVisited()) {
+            Cell eastCell = maze[x + 1][y];
+            if (eastCell.isNotVisited()) {
                 returnArray.add(Direction.EAST);
             }
         }catch(IndexOutOfBoundsException e){}
 
         //WEST
         try {
-            BacktrackerCell westCell = (BacktrackerCell) maze[x - 1][y];
-            if (!westCell.isVisited()) {
+            Cell westCell = maze[x - 1][y];
+            if (westCell.isNotVisited()) {
                 returnArray.add(Direction.WEST);
             }
         }catch (IndexOutOfBoundsException e){}
