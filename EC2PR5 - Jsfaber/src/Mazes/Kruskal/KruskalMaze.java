@@ -7,10 +7,7 @@ import java.util.ArrayList;
 
 public class KruskalMaze extends Maze {
 
-
     private int numRoots;
-
-    private Object stepLock;
 
     private enum Direction {
         NORTH,
@@ -20,6 +17,20 @@ public class KruskalMaze extends Maze {
     }
 
     protected KruskalMaze(int size, Object lock){
+        super(size, lock);
+
+        maze = new KruskalCell[width][height];
+        numRoots = width * height;
+
+        //initialize maze with default cells
+        for(int i = 0; i < width; i++){
+            for(int j =0; j < height; j++){
+                maze[i][j] = new KruskalCell();
+            }
+        }
+    }
+
+    public KruskalMaze(int size){
         super(size);
 
         maze = new KruskalCell[width][height];
@@ -32,11 +43,16 @@ public class KruskalMaze extends Maze {
             }
         }
 
-        stepLock = lock;
+        try {
+            generate();
+        }catch (InterruptedException e){
+            e.printStackTrace();
+        }
     }
 
-    @Override
-    public void generate() throws InterruptedException {
+    /**Generates the maze using Kruskals algorithm. The generation will call wait() on the declared lock between each
+     * division, and will require a notify() to continue.*/
+    @Override public void generate() throws InterruptedException {
         generateMaze();
 
         startCell = assignRandomExitCell();
@@ -47,7 +63,8 @@ public class KruskalMaze extends Maze {
         finished = true;
     }
 
-    /**Generates a maze using Kruskal's Algorithm. */
+    /**Generates a maze using Kruskal's algorithm. Every step is separated by a wait() call to the current thread on
+     * whichever object-lock was passed to the constructor.*/
     private void generateMaze() throws InterruptedException{
 
         // Kruskal's algorithm continues until the entire maze is a single set. In this implemenetation, the set is
@@ -63,7 +80,9 @@ public class KruskalMaze extends Maze {
             //check if the cells are in the same set.
             if(currCell.getRoot() != nextCell.getRoot()){
                 //wait before each step is taken.
-                synchronized (stepLock){ stepLock.wait(); }
+                if(isStepable()) {
+                    synchronized (stepLock) { stepLock.wait(); }
+                }
 
                 switch (randomDirection){
                     case NORTH:

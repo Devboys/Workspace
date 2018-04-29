@@ -6,7 +6,7 @@ public abstract class Maze {
 
     protected Cell startCell;
     protected Cell endCell;
-    //
+
     protected int startX = -1;
     protected int startY = -1;
 
@@ -19,6 +19,9 @@ public abstract class Maze {
 
     protected boolean finished;
 
+    private boolean stepable = false;
+    protected Object stepLock;
+
     protected enum Edges {
         NORTH,
         SOUTH,
@@ -26,19 +29,26 @@ public abstract class Maze {
         WEST
     }
 
-    public Maze(int size){
+    protected Maze(int size){
         height = size;
         width = size;
         rnd = new Random();
         maze = new Cell[width][height];
     }
+
+    protected Maze(int size, Object steplock){
+        this(size);
+        stepable = true;
+        this.stepLock = steplock;
+    }
+
     /**@param x The x-coordinate of the element.
      * @param y The y-coordinate of the element.
      * @return The Cell-element at the given position in the maze.*/
-    public Cell get(int x, int y) {return maze[x][y]; }
+    public Cell get(int x, int y) { return maze[x][y]; }
+
     /**Picks a random element on one of the outer walls of the maze and removes its outermost wall.
-     * @return the randomly selected element.
-     */
+     * @return the randomly selected element. */
     protected Cell assignRandomExitCell(){
         int exitX = -99;
         int exitY = -99;
@@ -94,8 +104,10 @@ public abstract class Maze {
         }
         return exitCell;
     }
+
     /** @return the number of elements in the x-direction of the maze. */
     public int getWidth(){ return width; }
+
     /** @return the number of elements in the y-direction of the maze */
     public int getHeight(){ return height; }
 
@@ -107,4 +119,6 @@ public abstract class Maze {
     }
 
     public abstract void generate() throws InterruptedException;
+
+    protected boolean isStepable() { return stepable; }
 }

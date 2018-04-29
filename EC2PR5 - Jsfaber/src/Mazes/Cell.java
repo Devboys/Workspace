@@ -1,7 +1,10 @@
 package Mazes;
 
+
+/**Simple data-structure that holds all values relevant to the generic cells used in mazes. Serves as a supertype
+ * for all special-case cells used in maze generation, but all post-generation functionality should only use generic
+ * cells.*/
 public class Cell {
-    //common variables that should be available to all types of cell
     protected boolean north;
     protected boolean south;
     protected boolean east;
@@ -11,8 +14,6 @@ public class Cell {
     private boolean end;
 
     private boolean visited;
-
-    //solving variables
     private boolean path;
 
     public boolean isNorthOpen(){ return north; }

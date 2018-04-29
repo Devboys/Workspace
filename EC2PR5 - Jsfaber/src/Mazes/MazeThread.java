@@ -8,8 +8,7 @@ public abstract class MazeThread extends Thread {
         return maze;
     }
 
-    @Override
-    public void run(){
+    @Override public void run(){
         try{
             maze.generate();
         }catch (InterruptedException e) {

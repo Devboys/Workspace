@@ -11,8 +11,7 @@ public class Main extends Application {
 
     private Controller appController;
 
-    @Override
-    public void start(Stage primaryStage) throws Exception{
+    @Override public void start(Stage primaryStage) throws Exception{
         FXMLLoader loader = new FXMLLoader(getClass().getResource("mazeFXML.fxml"));
 
         Parent root = loader.load();
@@ -25,8 +24,7 @@ public class Main extends Application {
 
     public static void main(String[] args) { launch(args); }
 
-    @Override
-    public void stop(){
+    @Override public void stop(){
         System.out.println("Closing application...");
         appController.stopCurrentThread();
     }

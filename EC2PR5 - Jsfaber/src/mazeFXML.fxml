@@ -2,6 +2,7 @@
 
 <?import javafx.scene.canvas.Canvas?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.layout.BorderPane?>
@@ -43,7 +44,8 @@
    <left>
       <Pane BorderPane.alignment="CENTER">
          <children>
-            <Button fx:id="solveButton" layoutY="14.0" mnemonicParsing="false" onAction="#solve" text="Solve Maze" />
+            <Button fx:id="solveButton" layoutY="33.0" mnemonicParsing="false" onAction="#solve" text="Solve Maze" />
+            <CheckBox layoutX="2.0" layoutY="6.0" mnemonicParsing="false" onAction="#switchStepable" text="Stepable" />
          </children>
       </Pane>
    </left>

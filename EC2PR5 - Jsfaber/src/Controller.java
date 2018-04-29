@@ -1,5 +1,8 @@
+import Mazes.Backtracker.BacktrackerMaze;
 import Mazes.Backtracker.BacktrackerThread;
+import Mazes.Division.DivisionMaze;
 import Mazes.Division.DivisionThread;
+import Mazes.Kruskal.KruskalMaze;
 import Mazes.Kruskal.KruskalThread;
 import Mazes.Maze;
 import Mazes.MazeSolver;
@@ -11,10 +14,9 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 
 public class Controller {
-    @FXML
-    Label modeLabel;
-    @FXML
-    Canvas canvas;
+
+    @FXML Label modeLabel;
+    @FXML Canvas canvas;
 
     private static final int mazeSize = 10;
     private static final int cellSize = 200/mazeSize;
@@ -23,43 +25,66 @@ public class Controller {
     private Thread currThread;
 
     private final Object stepLock = new Object();
+    private boolean stepable;
 
+    /**Creates, generates and draws an un-solved BacktrackerMaze. */
     public void newBacktrackerMaze() {
         stopCurrentThread();
+        currThread = null;
         modeLabel.setText("Recursive Backtracker");
 
-        BacktrackerThread bThread = new BacktrackerThread(mazeSize, stepLock);
-        currThread = bThread;
-        bThread.start();
-        currMaze = bThread.getMaze();
+        if(stepable) {
+            BacktrackerThread bThread = new BacktrackerThread(mazeSize, stepLock);
+            currThread = bThread;
+            bThread.start();
+            currMaze = bThread.getMaze();
+        }
+        else{
+            currMaze = new BacktrackerMaze(mazeSize);
+        }
 
         drawMaze();
     }
 
+    /**Creates, generates and draws an un-solved KruskalMaze. */
     public void newKruskalMaze(){
         stopCurrentThread();
+        currThread = null;
         modeLabel.setText("Kruskal's Algorithm");
 
-        KruskalThread kThread = new KruskalThread(mazeSize, stepLock);
-        kThread.start();
-        currThread = kThread;
-        currMaze = kThread.getMaze();
-
+        if(stepable) {
+            KruskalThread kThread = new KruskalThread(mazeSize, stepLock);
+            kThread.start();
+            currThread = kThread;
+            currMaze = kThread.getMaze();
+        }
+        else{
+            currMaze = new KruskalMaze(mazeSize);
+        }
         drawMaze();
     }
 
+    /**Creates, generates and draws an un-solved DivisionMaze. */
     public void newDivisionMaze(){
         stopCurrentThread();
+        currThread = null;
         modeLabel.setText("Recursive Division");
 
-        DivisionThread dThread = new DivisionThread(mazeSize, stepLock);
-        dThread.start();
-        currThread = dThread;
-        currMaze = dThread.getMaze();
+        if(stepable) {
+            DivisionThread dThread = new DivisionThread(mazeSize, stepLock);
+            dThread.start();
+            currThread = dThread;
+            currMaze = dThread.getMaze();
+        }
+        else{
+            currMaze = new DivisionMaze(mazeSize);
+        }
 
         drawMaze();
     }
 
+    /**Clears the screen and draws the walls of every cell in the maze, as well as indicators for start-cell, end-cell
+     * and cells on solution-path. */
     private void drawMaze(){
         GraphicsContext g = canvas.getGraphicsContext2D();
         //clear screen so that mazes aren't drawn on top of each other between calls.
@@ -88,6 +113,7 @@ public class Controller {
                     g.fillRect(x*cellSize+pathIndent, y*cellSize + pathIndent,
                             cellSize-pathIndent*2, cellSize-pathIndent*2);
                 }
+                g.setFill(Color.BLACK);
                 //Draw North walls
                 if(!currMaze.get(x, y).isNorthOpen()){
                     g.strokeLine(x*cellSize, y*cellSize, (x+1)*cellSize, y*cellSize);
@@ -114,7 +140,7 @@ public class Controller {
         }
     }
 
-    //draws an opaque outline of every cell in the maze. Does not clear screen.
+    /**Draws an opaque outline of every cell in the current maze. Does not clear screen.*/
     private void drawMockMaze(){
         GraphicsContext g = canvas.getGraphicsContext2D();
 
@@ -140,8 +166,9 @@ public class Controller {
         g.setStroke(oldColor);
     }
 
+    /**notifies the step-lock, allowing the current maze to take a single generation step.*/
     public void step(){
-        if(currMaze!= null) {
+        if(currMaze!= null && stepable) {
             if(!currMaze.isFinished()) {
                 synchronized (stepLock) {
                     stepLock.notify();
@@ -151,8 +178,9 @@ public class Controller {
         }
     }
 
+    /**Continuously notifies the step-lock until maze generation is finished.*/
     public void completeStep(){
-        if(currMaze != null) {
+        if(currMaze != null && stepable) {
             while(!currMaze.isFinished()) {
                 step();
             }
@@ -160,6 +188,7 @@ public class Controller {
         }
     }
 
+    /**Solves the current maze*/
     public void solve(){
         if(currMaze != null && currMaze.isFinished()) {
             MazeSolver solver = new MazeSolver(currMaze);
@@ -168,10 +197,13 @@ public class Controller {
         }
     }
 
+    /**Interrupts the current mazeThread.*/
     public void stopCurrentThread(){
         if(currThread != null) {
             currThread.interrupt();
         }
     }
+
+    public void switchStepable(){ stepable = !stepable; }
 
 }

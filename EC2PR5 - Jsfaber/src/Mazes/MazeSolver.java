@@ -21,6 +21,7 @@ public class MazeSolver {
         rnd = new Random();
     }
 
+    /** Solves the loaded maze using the current solve-mode(currently only depth-first-search solve implemented)*/
     public void solve(){
         depthFirstSolve(maze.getStartX(), maze.getStartY());
     }
@@ -81,8 +82,8 @@ public class MazeSolver {
         }
 
     /**Returns an array of traversable directions from the current cell at the given index.
-     * A direction is only traversable if there are no walls in the direction, and the cell in the direction has not yet
-     * been visited.
+     * A direction is only traversable if there are no walls between the current cell and the cell in the
+     * given direction, and the cell in the direction has not yet been visited.
      * @param x the x-index of the current cell.
      * @param y the y-index of the current cell.
      * @return an ArrayList containing all traversable directions from the current cell.*/

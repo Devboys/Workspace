@@ -5,10 +5,8 @@ import Mazes.Maze;
 
 public class DivisionMaze extends Maze {
 
-    private Object stepLock;
-
     protected DivisionMaze(int size, Object lock){
-        super(size);
+        super(size, lock);
 
         stepLock = lock;
 
@@ -19,9 +17,23 @@ public class DivisionMaze extends Maze {
         }
     }
 
+    public DivisionMaze(int size){
+        super(size);
+        for(int i = 0; i < width; i++){
+            for(int j = 0; j < height; j++){
+                maze[i][j] = new DivisionCell();
+            }
+        }
+        try{
+            generate();
+        }catch (InterruptedException e){
+            e.printStackTrace();
+        }
+    }
+
     /**Generates the maze using recursive divisor. The generation will call wait() on the declared lock between each
      * division, and will require a notify() to continue.
-     * @throws InterruptedException*/
+     * @throws InterruptedException */
     public void generate() throws InterruptedException{
         divide(maze);
 
@@ -35,13 +47,15 @@ public class DivisionMaze extends Maze {
         finished = true;
     }
 
-    /**Generates a maze using the recursive division algorithm
-     * @param region
-     * @throws InterruptedException
-     */
+    /**Generates a maze using recursive division. Every step is separated by a wait() call to the current thread on
+     * whichever object-lock was passed to the constructor.
+     * @param region The 2D-array of Cells to be divided in the current iteration.
+     * @throws InterruptedException */
     private void divide(Cell[][] region) throws InterruptedException{
         //wait before each step.
-        synchronized (stepLock){ stepLock.wait(); }
+        if(isStepable()) {
+            synchronized (stepLock) { stepLock.wait(); }
+        }
 
         int regionWidth = region.length;
         int regionHeight = region[0].length;

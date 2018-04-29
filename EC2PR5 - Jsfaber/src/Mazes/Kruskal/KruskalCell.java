@@ -2,23 +2,21 @@ package Mazes.Kruskal;
 
 import Mazes.Cell;
 
-/**
- * Extension of Mazes.Cell that adds one-way tree functionality for use in maze generation using Kruskal's algorithm.
- */
+/** Extension of Mazes.Cell that adds one-way tree functionality for use in maze generation using Kruskal's algorithm.*/
 public class KruskalCell extends Cell {
 
     KruskalCell previous;
 
     public KruskalCell(){ super(); }
 
-    /**
-     * @return the root of whatever tree the cell is in
-     */
+    /** @return the root of whatever tree the cell is in */
     public KruskalCell getRoot(){
         if(previous == null){ return this; }
         else { return previous.getRoot(); }
     }
 
+    /**Adds the current cell as a child-node of the given cell, thereby appending it to the given cells tree.
+     * @param prev */
     public void setPrevious(KruskalCell prev){ previous = prev; }
 
 }
