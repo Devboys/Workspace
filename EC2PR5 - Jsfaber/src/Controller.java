@@ -18,7 +18,7 @@ public class Controller {
     @FXML Label modeLabel;
     @FXML Canvas canvas;
 
-    private static final int mazeSize = 10;
+    private static final int mazeSize = 20;
     private static final int cellSize = 200/mazeSize;
 
     private Maze currMaze;
