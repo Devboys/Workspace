@@ -88,6 +88,10 @@ public class MazeTest {
         }
     }
 
+
+    /*Recursive backtracker algorithm that explores all cells that can be reached from its start point and counts them.
+     * If the amount of reachable cells  are not equal to the amount of cells in the maze, there must be an inacessible
+     * field or set of fields.*/
     private void InaccessibleTester(int x, int y, Maze maze, Direction prevDirection){
         numSteps++;
         ArrayList<Direction> availableDirections = getTraversableDirections(x, y, maze);
@@ -111,6 +115,9 @@ public class MazeTest {
         }
     }
 
+    //Recursive backtracker algorithm that explores all cells in the maze and counts them. If at any point the amount of
+    //steps taken exceed the amount of cells in the maze, there must be a loop in the maze. Because of this, we must
+    //assert this after every check to avoid infinite looping.
     private void LoopTester(int x, int y, Maze maze, Direction prevDirection){
         numSteps++;
         Assert.assertTrue(numSteps <= NUM_CELLS);
@@ -135,6 +142,7 @@ public class MazeTest {
         }
     }
 
+    //utility method used in both types of checkers that checks which directions are traversable from cell at (x,y).
     private ArrayList<Direction> getTraversableDirections(int x, int y, Maze maze){
         ArrayList<Direction> returnArray = new ArrayList<Direction>(4);
         Cell currCell = maze.get(x, y);
