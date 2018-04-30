@@ -89,9 +89,9 @@ public class MazeTest {
     }
 
 
-    /*Recursive backtracker algorithm that explores all cells that can be reached from its start point and counts them.
-     * If the amount of reachable cells  are not equal to the amount of cells in the maze, there must be an inacessible
-     * field or set of fields.*/
+    //Recursive backtracker algorithm that explores all cells that can be reached from its start point and counts them.
+    //If the amount of reachable cells  are not equal to the amount of cells in the maze, there must be an inacessible
+    //field or set of fields.
     private void InaccessibleTester(int x, int y, Maze maze, Direction prevDirection){
         numSteps++;
         ArrayList<Direction> availableDirections = getTraversableDirections(x, y, maze);
